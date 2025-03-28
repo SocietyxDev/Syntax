@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syntax #1 Autohar</title>
+    <style>
+        body {
+            background-color: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .container {
+            padding: 40px 5%;
+            position: relative;
+            z-index: 2;
+        }
+        h1 {
+            font-size: 8vw;
+            font-weight: bold;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px white;
+        }
+        p {
+            font-size: 3vw;
+            color: #ccc;
+        }
+        .underline {
+            width: 80%;
+            height: 2px;
+            background-color: #444;
+            margin: 10px auto 20px auto;
+        }
+        .buttons {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .button {
+            display: block;
+            background-color: rgba(34, 34, 34, 0.5);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 4vw;
+            text-decoration: none;
+            border: 2px solid white;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .button:hover {
+            background-color: rgba(51, 51, 51, 0.8);
+            box-shadow: 0 0 20px white, 0 0 40px rgba(255, 255, 255, 0.5);
+        }
+        .features {
+            background-color: rgba(34, 34, 34, 0.5);
+            display: inline-block;
+            padding: 5%;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid white;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            transition: 0.3s;
+            width: 90%;
+        }
+        .features:hover {
+            box-shadow: 0 0 20px white, 0 0 40px rgba(255, 255, 255, 0.5);
+        }
+        .features h2 {
+            font-size: 5vw;
+        }
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+        .features li {
+            font-size: 3.5vw;
+            color: #ccc;
+            margin: 8px 0;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 2.5vw;
+            color: #666;
+        }
+        @media (min-width: 768px) {
+            .buttons {
+                flex-direction: row;
+                justify-content: center;
+            }
+            .button {
+                font-size: 16px;
+                padding: 15px 30px;
+            }
+            .features {
+                width: 50%;
+            }
+            h1 {
+                font-size: 48px;
+            }
+            p {
+                font-size: 14px;
+            }
+            .features h2 {
+                font-size: 24px;
+            }
+            .features li {
+                font-size: 16px;
+            }
+            .footer {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <div class="container">
+        <h1>Syntax #1 Autohar</h1>
+        <p>Developed by <strong>Syntax</strong> on Discord, the owner of <a href="https://discord.gg/499zddGkba" style="color: white; text-decoration: none;">https://discord.gg/499zddGkba</a></p>
+        <div class="underline"></div>
+        <div class="buttons">
+            <a href="https://discord.gg/499zddGkba" class="button">&lt;/&gt; AutoHar Gen</a>
+            <a href="https://discord.gg/499zddGkba" class="button">&#128274; Main Site Login</a>
+            <a href="https://discord.gg/499zddGkba" class="button">&#128230; Refresher</a>
+        </div>
+        <div class="features">
+            <h2>Features</h2>
+            <ul>
+                <li>&#128313; Easy to Use Interface</li>
+                <li>&#128313; Fast & Reliable Performance</li>
+                <li>&#128313; Active Community Support</li>
+                <li>&#128313; Regular Updates & Improvements</li>
+            </ul>
+        </div>
+        <div class="footer">© 2025 Syntax #1 Autohar. All rights reserved.</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("particles");
+        const ctx = canvas.getContext("2d");
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            createParticles();
+        }
+
+        let particlesArray = [];
+
+        class Particle {
+            constructor(x, y, size, speedX, speedY) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.speedX = speedX;
+                this.speedY = speedY;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x <= 0 || this.x >= canvas.width) this.speedX *= -1;
+                if (this.y <= 0 || this.y >= canvas.height) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = "white";
+                ctx.fill();
+            }
+        }
+
+        function createParticles() {
+            particlesArray = [];
+            let numParticles = window.innerWidth < 768 ? 40 : 80; // Reduce particles on mobile
+            for (let i = 0; i < numParticles; i++) {
+                let size = Math.random() * 3 + 1;
+                let x = Math.random() * canvas.width;
+                let y = Math.random() * canvas.height;
+                let speedX = (Math.random() - 0.5) * 2;
+                let speedY = (Math.random() - 0.5) * 2;
+                particlesArray.push(new Particle(x, y, size, speedX, speedY));
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < particlesArray.length; i++) {
+                let particle = particlesArray[i];
+                particle.update();
+                particle.draw();
+
+                for (let j = i + 1; j < particlesArray.length; j++) {
+                    let dx = particle.x - particlesArray[j].x;
+                    let dy = particle.y - particlesArray[j].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particle.x, particle.y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+        animateParticles();
+    </script>
+</body>
+</html>
