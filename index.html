@@ -13,7 +13,6 @@
             --secondary: #8b949e;
             --accent: #00ffaa;
             --discord: #5865F2;
-            --alert: #ff5555;
             --glow: 0 0 10px rgba(88, 166, 255, 0.7);
         }
         
@@ -116,12 +115,6 @@
             color: white;
         }
         
-        .button.logout {
-            background: rgba(255, 85, 85, 0.2);
-            border-color: var(--alert);
-            color: var(--alert);
-        }
-        
         .button::before {
             content: '';
             position: absolute;
@@ -141,11 +134,6 @@
         .button.discord:hover {
             background: rgba(88, 101, 242, 0.4);
             box-shadow: 0 0 10px var(--discord), 0 0 20px rgba(88, 101, 242, 0.3);
-        }
-        
-        .button.logout:hover {
-            background: rgba(255, 85, 85, 0.4);
-            box-shadow: 0 0 10px var(--alert), 0 0 20px rgba(255, 85, 85, 0.3);
         }
         
         .button:hover::before {
@@ -228,12 +216,9 @@
             animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
         }
         
-        .auth-container {
+        .discord-login-container {
             width: 100%;
             margin-top: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
         }
         
         .user-avatar {
@@ -248,14 +233,14 @@
             transition: all 0.3s ease;
             z-index: 100;
             display: none;
-            cursor: pointer;
         }
         
         .user-avatar:hover {
             transform: scale(1.1);
             box-shadow: 0 0 20px var(--primary);
         }
-        
+
+        /* NEW: Hide login button when logged in */
         .hidden {
             display: none !important;
         }
@@ -298,8 +283,8 @@
     <!-- Matrix Background -->
     <canvas id="matrix"></canvas>
     
-    <!-- User Avatar (Click to Logout) -->
-    <img id="userAvatar" class="user-avatar hidden" src="" alt="Discord Avatar" title="Click to logout">
+    <!-- User Avatar -->
+    <img id="userAvatar" class="user-avatar" src="" alt="Discord Avatar">
     
     <!-- Main Content -->
     <div class="container">
@@ -322,12 +307,9 @@
                 <span style="color: var(--accent)">#</span> Bypasser
             </a>
             
-            <div class="auth-container">
+            <div class="discord-login-container">
                 <button id="discordLogin" class="button discord">
                     <span style="color: white">⎔</span> Login with Discord
-                </button>
-                <button id="logoutBtn" class="button logout hidden">
-                    <span style="color: var(--alert)">✖</span> Logout
                 </button>
             </div>
         </div>
@@ -349,65 +331,51 @@
 
     <script>
         // ======================
-        // DISCORD AUTH SYSTEM
+        // UPDATED DISCORD AUTH SYSTEM
         // ======================
         
         // Configuration
         const DISCORD_CLIENT_ID = "1355364009876127863";
         const DISCORD_REDIRECT_URI = "https://syntax-site.vercel.app";
         const DISCORD_SCOPE = "identify";
-        const SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
 
         // DOM Elements
         const discordLoginBtn = document.getElementById('discordLogin');
-        const logoutBtn = document.getElementById('logoutBtn');
         const userAvatar = document.getElementById('userAvatar');
 
         // Session Management
-        function saveSession(userData) {
-            const session = {
-                user: userData,
-                expires: Date.now() + SESSION_TIMEOUT
-            };
-            localStorage.setItem('discord_session', JSON.stringify(session));
-        }
-
-        function getSession() {
-            const session = localStorage.getItem('discord_session');
-            if (!session) return null;
-            
-            const data = JSON.parse(session);
-            if (Date.now() > data.expires) {
-                clearSession();
-                return null;
-            }
-            return data.user;
+        function saveSession(user) {
+            localStorage.setItem('discord_session', JSON.stringify({
+                id: user.id,
+                avatar: user.avatar,
+                username: user.username,
+                timestamp: Date.now()
+            }));
         }
 
         function clearSession() {
             localStorage.removeItem('discord_session');
         }
 
-        // UI Management
-        function updateAuthUI(loggedIn, userData = null) {
+        function getSession() {
+            const session = localStorage.getItem('discord_session');
+            return session ? JSON.parse(session) : null;
+        }
+
+        // Update UI States
+        function updateAuthState(loggedIn, userData) {
             if (loggedIn) {
                 discordLoginBtn.classList.add('hidden');
-                logoutBtn.classList.remove('hidden');
-                userAvatar.classList.remove('hidden');
-                
-                if (userData) {
-                    userAvatar.src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png?size=128`;
-                    userAvatar.title = `Logged in as ${userData.username}`;
-                }
+                userAvatar.style.display = 'block';
+                userAvatar.src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png?size=128`;
             } else {
                 discordLoginBtn.classList.remove('hidden');
-                logoutBtn.classList.add('hidden');
-                userAvatar.classList.add('hidden');
+                userAvatar.style.display = 'none';
             }
         }
 
         // Discord Auth Functions
-        async function handleDiscordLogin() {
+        function initDiscordLogin() {
             const state = Math.random().toString(36).substring(2, 15);
             localStorage.setItem('oauth_state', state);
             
@@ -426,17 +394,15 @@
                 try {
                     const user = await fetchDiscordUser(accessToken);
                     saveSession(user);
-                    updateAuthUI(true, user);
+                    updateAuthState(true, user);
                     
                     // Clean URL
                     history.replaceState({}, document.title, window.location.pathname);
-                    return true;
                 } catch (error) {
                     console.error("Auth failed:", error);
                     clearSession();
                 }
             }
-            return false;
         }
 
         async function fetchDiscordUser(token) {
@@ -445,21 +411,8 @@
             });
             const user = await response.json();
             
-            if (!user.id || !user.avatar) {
-                throw new Error("Invalid user data");
-            }
-            
-            return {
-                id: user.id,
-                username: user.username,
-                avatar: user.avatar,
-                discriminator: user.discriminator
-            };
-        }
-
-        function handleLogout() {
-            clearSession();
-            updateAuthUI(false);
+            if (!user.avatar) throw new Error("Invalid user data");
+            return user;
         }
 
         // ======================
@@ -531,20 +484,18 @@
         // INITIALIZE EVERYTHING
         // ======================
         
-        window.addEventListener('DOMContentLoaded', async () => {
-            // Initialize auth
+        window.addEventListener('DOMContentLoaded', () => {
+            // Check for existing session
             const session = getSession();
             if (session) {
-                updateAuthUI(true, session);
+                updateAuthState(true, session);
             }
             
             // Handle auth callback if exists
-            await handleAuthCallback();
+            handleAuthCallback();
             
-            // Setup event listeners
-            discordLoginBtn.addEventListener('click', handleDiscordLogin);
-            logoutBtn.addEventListener('click', handleLogout);
-            userAvatar.addEventListener('click', handleLogout);
+            // Setup login button
+            discordLoginBtn.addEventListener('click', initDiscordLogin);
             
             // Handle window resize
             window.addEventListener('resize', () => {
