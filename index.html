@@ -57,6 +57,12 @@
             color: transparent;
             text-shadow: var(--glow);
             letter-spacing: -1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        h1:hover {
+            text-shadow: 0 0 15px rgba(88, 166, 255, 0.9);
         }
         
         .tagline {
@@ -233,6 +239,7 @@
             transition: all 0.3s ease;
             z-index: 100;
             display: none;
+            cursor: pointer;
         }
         
         .user-avatar:hover {
@@ -240,9 +247,34 @@
             box-shadow: 0 0 20px var(--primary);
         }
 
-        /* NEW: Hide login button when logged in */
+        /* Hide login button when logged in */
         .hidden {
             display: none !important;
+        }
+        
+        /* Logout button styles */
+        .logout-btn {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 50, 50, 0.2);
+            border: 1px solid rgba(255, 50, 50, 0.5);
+            color: #ff6b6b;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            z-index: 100;
+            display: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 50, 50, 0.3);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+            color: #ff5252;
         }
         
         @keyframes typing {
@@ -276,6 +308,12 @@
                 top: 15px;
                 right: 15px;
             }
+            
+            .logout-btn {
+                top: 65px;
+                right: 15px;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -286,9 +324,12 @@
     <!-- User Avatar -->
     <img id="userAvatar" class="user-avatar" src="" alt="Discord Avatar">
     
+    <!-- Logout Button -->
+    <button id="logoutBtn" class="logout-btn">Logout</button>
+    
     <!-- Main Content -->
     <div class="container">
-        <h1 class="typewriter">SYNTAX AUTOHAR</h1>
+        <h1 id="mainLogo" class="typewriter">SYNTAX AUTOHAR</h1>
         <p class="tagline">Developed by <strong>Syntax</strong> on Discord | Owner of <a href="https://discord.gg/499zddGkba">discord.gg/499zddGkba</a></p>
         
         <div class="divider"></div>
@@ -342,6 +383,8 @@
         // DOM Elements
         const discordLoginBtn = document.getElementById('discordLogin');
         const userAvatar = document.getElementById('userAvatar');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const mainLogo = document.getElementById('mainLogo');
 
         // Session Management
         function saveSession(user) {
@@ -368,9 +411,20 @@
                 discordLoginBtn.classList.add('hidden');
                 userAvatar.style.display = 'block';
                 userAvatar.src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png?size=128`;
+                logoutBtn.style.display = 'none'; // Hide logout button initially
             } else {
                 discordLoginBtn.classList.remove('hidden');
                 userAvatar.style.display = 'none';
+                logoutBtn.style.display = 'none';
+            }
+        }
+
+        // Toggle logout button visibility
+        function toggleLogoutButton() {
+            if (logoutBtn.style.display === 'none' || logoutBtn.style.display === '') {
+                logoutBtn.style.display = 'block';
+            } else {
+                logoutBtn.style.display = 'none';
             }
         }
 
@@ -380,6 +434,12 @@
             localStorage.setItem('oauth_state', state);
             
             window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=token&scope=${DISCORD_SCOPE}&state=${state}&prompt=consent`;
+        }
+
+        function handleLogout() {
+            clearSession();
+            updateAuthState(false, null);
+            toggleLogoutButton(); // Ensure logout button is hidden
         }
 
         async function handleAuthCallback() {
@@ -496,6 +556,22 @@
             
             // Setup login button
             discordLoginBtn.addEventListener('click', initDiscordLogin);
+            
+            // Setup logout button
+            logoutBtn.addEventListener('click', handleLogout);
+            
+            // Toggle logout button when clicking avatar or logo
+            userAvatar.addEventListener('click', toggleLogoutButton);
+            mainLogo.addEventListener('click', () => {
+                if (session) toggleLogoutButton();
+            });
+            
+            // Hide logout button when clicking anywhere else
+            document.addEventListener('click', (e) => {
+                if (session && e.target !== userAvatar && e.target !== mainLogo && e.target !== logoutBtn) {
+                    logoutBtn.style.display = 'none';
+                }
+            });
             
             // Handle window resize
             window.addEventListener('resize', () => {
