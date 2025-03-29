@@ -3,17 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Syntax #1 Autohar</title>
+    <title>SYNTAX | Autohar v2.0</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --bg: #0d1117;
+            --primary: #58a6ff;
+            --secondary: #8b949e;
+            --accent: #00ffaa;
+            --discord: #5865F2;
+            --glow: 0 0 10px rgba(88, 166, 255, 0.7);
+        }
+        
         body {
-            background-color: #111;
+            background-color: var(--bg);
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: 'JetBrains Mono', monospace;
             text-align: center;
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            overflow-x: hidden;
+            line-height: 1.6;
+            user-select: none;
+            -webkit-user-select: none;
         }
+        
         canvas {
             position: fixed;
             top: 0;
@@ -21,212 +36,451 @@
             width: 100%;
             height: 100%;
             z-index: -1;
+            opacity: 0.15;
         }
+        
         .container {
-            padding: 40px 5%;
+            padding: 2rem 5%;
             position: relative;
             z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
         }
+        
         h1 {
-            font-size: 8vw;
-            font-weight: bold;
-            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px white;
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-weight: 700;
+            margin: 1rem 0;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: var(--glow);
+            letter-spacing: -1px;
         }
-        p {
-            font-size: 3vw;
-            color: #ccc;
+        
+        .tagline {
+            color: var(--secondary);
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            margin-bottom: 2rem;
+            opacity: 0.9;
         }
-        .underline {
-            width: 80%;
-            height: 2px;
-            background-color: #444;
-            margin: 10px auto 20px auto;
-        }
-        .buttons {
-            margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .button {
-            display: block;
-            background-color: rgba(34, 34, 34, 0.5);
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 4vw;
+        
+        .tagline a {
+            color: var(--primary);
             text-decoration: none;
-            border: 2px solid white;
             transition: 0.3s;
-            text-align: center;
         }
+        
+        .tagline a:hover {
+            text-shadow: var(--glow);
+        }
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            margin: 1.5rem auto;
+            width: 70%;
+            opacity: 0.5;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        
+        .button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: rgba(13, 17, 23, 0.7);
+            cursor: pointer;
+        }
+        
+        .button.discord {
+            background: rgba(88, 101, 242, 0.2);
+            border-color: var(--discord);
+            color: white;
+        }
+        
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(88, 166, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
         .button:hover {
-            background-color: rgba(51, 51, 51, 0.8);
-            box-shadow: 0 0 20px white, 0 0 40px rgba(255, 255, 255, 0.5);
+            background: rgba(88, 166, 255, 0.1);
+            box-shadow: 0 0 10px var(--primary), 0 0 20px rgba(88, 166, 255, 0.3);
         }
+        
+        .button.discord:hover {
+            background: rgba(88, 101, 242, 0.4);
+            box-shadow: 0 0 10px var(--discord), 0 0 20px rgba(88, 101, 242, 0.3);
+        }
+        
+        .button:hover::before {
+            left: 100%;
+        }
+        
         .features {
-            background-color: rgba(34, 34, 34, 0.5);
-            display: inline-block;
-            padding: 5%;
-            border-radius: 10px;
-            margin-top: 20px;
-            border: 2px solid white;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-            transition: 0.3s;
-            width: 90%;
+            background: rgba(13, 17, 23, 0.7);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            box-shadow: 0 0 20px rgba(88, 166, 255, 0.1);
+            position: relative;
+            overflow: hidden;
         }
-        .features:hover {
-            box-shadow: 0 0 20px white, 0 0 40px rgba(255, 255, 255, 0.5);
+        
+        .features::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(88, 166, 255, 0.05) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
         }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         .features h2 {
-            font-size: 5vw;
+            font-size: clamp(1.3rem, 5vw, 1.8rem);
+            margin-bottom: 1rem;
+            color: var(--accent);
+            text-shadow: 0 0 8px rgba(0, 255, 170, 0.5);
         }
+        
         .features ul {
             list-style: none;
             padding: 0;
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
         }
+        
         .features li {
-            font-size: 3.5vw;
-            color: #ccc;
-            margin: 8px 0;
+            padding: 0.5rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            color: var(--secondary);
         }
+        
+        .features li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
         .footer {
-            margin-top: 40px;
-            font-size: 2.5vw;
-            color: #666;
+            margin-top: 3rem;
+            font-size: 0.8rem;
+            color: var(--secondary);
+            opacity: 0.7;
         }
-        @media (min-width: 768px) {
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid var(--primary);
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: 0.15em;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+        
+        .discord-login-container {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .user-avatar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 15px rgba(88, 166, 255, 0.5);
+            transition: all 0.3s ease;
+            z-index: 100;
+            display: none;
+        }
+        
+        .user-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--primary);
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--primary) }
+        }
+        
+        @media (max-width: 768px) {
             .buttons {
-                flex-direction: row;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .button {
+                width: 100%;
                 justify-content: center;
             }
-            .button {
-                font-size: 16px;
-                padding: 15px 30px;
-            }
+            
             .features {
-                width: 50%;
+                padding: 1rem;
             }
-            h1 {
-                font-size: 48px;
-            }
-            p {
-                font-size: 14px;
-            }
-            .features h2 {
-                font-size: 24px;
-            }
-            .features li {
-                font-size: 16px;
-            }
-            .footer {
-                font-size: 12px;
+            
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                top: 15px;
+                right: 15px;
             }
         }
     </style>
 </head>
 <body>
-    <canvas id="particles"></canvas>
+    <!-- Matrix Background -->
+    <canvas id="matrix"></canvas>
+    
+    <!-- User Avatar -->
+    <img id="userAvatar" class="user-avatar" src="" alt="Discord Avatar">
+    
+    <!-- Main Content -->
     <div class="container">
-        <h1>Syntax #1 Autohar</h1>
-        <p>Developed by <strong>Syntax</strong> on Discord, the owner of <a href="https://discord.gg/499zddGkba" style="color: white; text-decoration: none;">https://discord.gg/499zddGkba</a></p>
-        <div class="underline"></div>
+        <h1 class="typewriter">SYNTAX AUTOHAR</h1>
+        <p class="tagline">Developed by <strong>Syntax</strong> on Discord | Owner of <a href="https://discord.gg/499zddGkba">discord.gg/499zddGkba</a></p>
+        
+        <div class="divider"></div>
+        
         <div class="buttons">
-            <a href="https://autohar-three.vercel.app/" class="button">&lt;/&gt; AutoHar Gen</a>
-            <a href="https://discord.gg/499zddGkba" class="button">&#128274; Main Site Login</a>
-            <a href="https://discord.gg/499zddGkba" class="button">&#128230; Refresher</a>
+            <a href="YOUR_AUTOHAR_LINK_HERE" class="button">
+                <span style="color: var(--accent)">$</span> AutoHar Gen
+            </a>
+            <a href="YOUR_LOGIN_LINK_HERE" class="button">
+                <span style="color: var(--accent)">></span> Main Site Login
+            </a>
+            <a href="YOUR_REFRESHER_LINK_HERE" class="button">
+                <span style="color: var(--accent)">~</span> Refresher
+            </a>
+            <a href="YOUR_BYPASSER_LINK_HERE" class="button">
+                <span style="color: var(--accent)">#</span> Bypasser
+            </a>
+            
+            <div class="discord-login-container">
+                <button id="discordLogin" class="button discord">
+                    <span style="color: white">⎔</span> Login with Discord
+                </button>
+            </div>
         </div>
+        
         <div class="features">
-            <h2>Features</h2>
+            <h2>// FEATURES</h2>
             <ul>
-                <li>&#128313; Easy to Use Interface</li>
-                <li>&#128313; Fast & Reliable Performance</li>
-                <li>&#128313; Active Community Support</li>
-                <li>&#128313; Regular Updates & Improvements</li>
+                <li>Easy to Use Interface</li>
+                <li>Fast & Reliable Performance</li>
+                <li>Active Community Support</li>
+                <li>Regular Updates & Improvements</li>
             </ul>
         </div>
-        <div class="footer">© 2025 Syntax #1 Autohar. All rights reserved.</div>
+        
+        <div class="footer">
+            <span style="color: var(--primary)">SYSTEM</span> | Autohar v2.0 | © 2025 Syntax
+        </div>
     </div>
 
     <script>
-        const canvas = document.getElementById("particles");
-        const ctx = canvas.getContext("2d");
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            createParticles();
+        // ======================
+        // DISCORD OAUTH IMPLEMENTATION
+        // ======================
+        
+        // Configuration
+        const DISCORD_CLIENT_ID = "1355364009876127863"; // Your client ID
+        const DISCORD_REDIRECT_URI = "https://syntax-site.vercel.app"; // Direct to main site
+        const DISCORD_SCOPE = "identify";
+        
+        // DOM Elements
+        const discordLoginBtn = document.getElementById('discordLogin');
+        const userAvatar = document.getElementById('userAvatar');
+        
+        // Initialize Discord Auth
+        function initDiscordAuth() {
+            discordLoginBtn.addEventListener('click', () => {
+                // Clear any existing session
+                localStorage.removeItem('discord_user');
+                
+                // Generate unique state token
+                const state = Math.random().toString(36).substring(2, 15);
+                localStorage.setItem('discord_state', state);
+                
+                // Redirect to Discord OAuth
+                window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=token&scope=${DISCORD_SCOPE}&state=${state}&prompt=consent`;
+            });
+            
+            // Check for callback
+            handleAuthCallback();
         }
-
-        let particlesArray = [];
-
-        class Particle {
-            constructor(x, y, size, speedX, speedY) {
-                this.x = x;
-                this.y = y;
-                this.size = size;
-                this.speedX = speedX;
-                this.speedY = speedY;
-            }
-
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                if (this.x <= 0 || this.x >= canvas.width) this.speedX *= -1;
-                if (this.y <= 0 || this.y >= canvas.height) this.speedY *= -1;
-            }
-
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = "white";
-                ctx.fill();
+        
+        // Handle the callback from Discord
+        function handleAuthCallback() {
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            
+            const accessToken = params.get('access_token');
+            const state = params.get('state');
+            const storedState = localStorage.getItem('discord_state');
+            
+            if (accessToken && state && state === storedState) {
+                fetchDiscordUser(accessToken);
+                
+                // Clean URL - REMOVES TOKEN FROM ADDRESS BAR
+                history.replaceState({}, document.title, window.location.pathname);
             }
         }
-
-        function createParticles() {
-            particlesArray = [];
-            let numParticles = window.innerWidth < 768 ? 40 : 80; // Reduce particles on mobile
-            for (let i = 0; i < numParticles; i++) {
-                let size = Math.random() * 3 + 1;
-                let x = Math.random() * canvas.width;
-                let y = Math.random() * canvas.height;
-                let speedX = (Math.random() - 0.5) * 2;
-                let speedY = (Math.random() - 0.5) * 2;
-                particlesArray.push(new Particle(x, y, size, speedX, speedY));
-            }
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            for (let i = 0; i < particlesArray.length; i++) {
-                let particle = particlesArray[i];
-                particle.update();
-                particle.draw();
-
-                for (let j = i + 1; j < particlesArray.length; j++) {
-                    let dx = particle.x - particlesArray[j].x;
-                    let dy = particle.y - particlesArray[j].y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 100) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
-                        ctx.lineWidth = 1;
-                        ctx.moveTo(particle.x, particle.y);
-                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
-                        ctx.stroke();
-                    }
+        
+        // Fetch Discord user data
+        function fetchDiscordUser(token) {
+            fetch('https://discord.com/api/users/@me', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(response => response.json())
+            .then(user => {
+                if (user.avatar) {
+                    const avatarUrl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`;
+                    userAvatar.src = avatarUrl;
+                    userAvatar.style.display = 'block';
+                    
+                    // Store user data temporarily
+                    localStorage.setItem('discord_user', JSON.stringify(user));
                 }
+            });
+        }
+        
+        // Check for existing session on load
+        function checkExistingSession() {
+            const userData = localStorage.getItem('discord_user');
+            if (userData) {
+                const user = JSON.parse(userData);
+                const avatarUrl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`;
+                userAvatar.src = avatarUrl;
+                userAvatar.style.display = 'block';
             }
-            requestAnimationFrame(animateParticles);
         }
 
-        window.addEventListener("resize", resizeCanvas);
-        resizeCanvas();
-        animateParticles();
+        // ======================
+        // MATRIX BACKGROUND
+        // ======================
+        
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+        const symbols = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+        
+        const alphabet = katakana + latin + nums + symbols;
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const rainDrops = [];
+        
+        for (let x = 0; x < columns; x++) {
+            rainDrops[x] = 1;
+        }
+        
+        const draw = () => {
+            ctx.fillStyle = 'rgba(13, 17, 23, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#58a6ff';
+            ctx.font = fontSize + 'px JetBrains Mono';
+            
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+                
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        };
+        
+        setInterval(draw, 30);
+        
+        // ======================
+        // TYPEWRITER EFFECT
+        // ======================
+        
+        const typewriterElements = document.querySelectorAll('.typewriter');
+        typewriterElements.forEach(el => {
+            const text = el.textContent;
+            el.textContent = '';
+            
+            let i = 0;
+            const typing = setInterval(() => {
+                if (i < text.length) {
+                    el.textContent += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typing);
+                    el.style.borderRight = 'none';
+                }
+            }, 100);
+        });
+        
+        // ======================
+        // INITIALIZE EVERYTHING
+        // ======================
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            initDiscordAuth();
+            checkExistingSession();
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        });
     </script>
 </body>
 </html>
