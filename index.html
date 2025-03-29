@@ -27,6 +27,7 @@
             line-height: 1.6;
             user-select: none;
             -webkit-user-select: none;
+            min-height: 100vh;
         }
         
         canvas {
@@ -40,17 +41,18 @@
         }
         
         .container {
-            padding: 2rem 5%;
+            padding: 1rem 5%;
             position: relative;
             z-index: 2;
             max-width: 1200px;
             margin: 0 auto;
+            box-sizing: border-box;
         }
         
         h1 {
             font-size: clamp(2rem, 8vw, 3.5rem);
             font-weight: 700;
-            margin: 1rem 0;
+            margin: 0.5rem 0;
             background: linear-gradient(90deg, var(--primary), var(--accent));
             -webkit-background-clip: text;
             background-clip: text;
@@ -68,14 +70,16 @@
         .tagline {
             color: var(--secondary);
             font-size: clamp(0.9rem, 3vw, 1.1rem);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             opacity: 0.9;
+            line-height: 1.4;
         }
         
         .tagline a {
             color: var(--primary);
             text-decoration: none;
             transition: 0.3s;
+            word-break: break-all;
         }
         
         .tagline a:hover {
@@ -95,7 +99,7 @@
             gap: 1rem;
             justify-content: center;
             flex-wrap: wrap;
-            margin: 2rem 0;
+            margin: 1.5rem 0;
         }
         
         .button {
@@ -113,12 +117,18 @@
             color: var(--primary);
             background: rgba(13, 17, 23, 0.7);
             cursor: pointer;
+            flex: 1 1 auto;
+            min-width: 180px;
+            max-width: 250px;
+            justify-content: center;
         }
         
         .button.discord {
             background: rgba(88, 101, 242, 0.2);
             border-color: var(--discord);
             color: white;
+            max-width: 100%;
+            width: 100%;
         }
         
         .button::before {
@@ -151,11 +161,12 @@
             border: 1px solid var(--primary);
             border-radius: 8px;
             padding: 1.5rem;
-            margin: 2rem auto;
+            margin: 1.5rem auto;
             max-width: 800px;
             box-shadow: 0 0 20px rgba(88, 166, 255, 0.1);
             position: relative;
             overflow: hidden;
+            box-sizing: border-box;
         }
         
         .features::before {
@@ -196,6 +207,7 @@
             padding-left: 1.5rem;
             font-size: clamp(0.9rem, 3vw, 1rem);
             color: var(--secondary);
+            line-height: 1.5;
         }
         
         .features li::before {
@@ -207,10 +219,11 @@
         }
         
         .footer {
-            margin-top: 3rem;
+            margin-top: 2rem;
             font-size: 0.8rem;
             color: var(--secondary);
             opacity: 0.7;
+            padding-bottom: 1rem;
         }
         
         .typewriter {
@@ -229,10 +242,10 @@
         
         .user-avatar {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             border: 2px solid var(--primary);
             box-shadow: 0 0 15px rgba(88, 166, 255, 0.5);
@@ -255,15 +268,15 @@
         /* Logout button styles */
         .logout-btn {
             position: fixed;
-            top: 80px;
-            right: 20px;
+            top: 65px;
+            right: 15px;
             padding: 0.5rem 1rem;
             background: rgba(255, 50, 50, 0.2);
             border: 1px solid rgba(255, 50, 50, 0.5);
             color: #ff6b6b;
             border-radius: 4px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             cursor: pointer;
             z-index: 100;
             display: none;
@@ -287,32 +300,87 @@
             50% { border-color: var(--primary) }
         }
         
+        /* Mobile-specific adjustments */
         @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                margin-top: 1rem;
+            }
+            
+            .tagline {
+                margin-bottom: 1rem;
+            }
+            
             .buttons {
-                flex-direction: column;
-                align-items: center;
+                gap: 0.75rem;
+                margin: 1rem 0;
             }
             
             .button {
-                width: 100%;
-                justify-content: center;
+                min-width: 100%;
+                max-width: 100%;
+                padding: 0.75rem 1rem;
             }
             
             .features {
                 padding: 1rem;
+                margin: 1rem 0;
+            }
+            
+            .divider {
+                margin: 1rem auto;
+                width: 90%;
             }
             
             .user-avatar {
-                width: 40px;
-                height: 40px;
-                top: 15px;
-                right: 15px;
+                width: 36px;
+                height: 36px;
+                top: 10px;
+                right: 10px;
             }
             
             .logout-btn {
-                top: 65px;
-                right: 15px;
-                font-size: 0.8rem;
+                top: 56px;
+                right: 10px;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .features li {
+                padding-left: 1rem;
+                font-size: 0.85rem;
+            }
+            
+            .features li::before {
+                left: 0.2rem;
+            }
+            
+            .footer {
+                font-size: 0.7rem;
+            }
+        }
+        
+        /* Large screens */
+        @media (min-width: 1200px) {
+            .container {
+                padding: 2rem 5%;
+            }
+            
+            .user-avatar {
+                width: 50px;
+                height: 50px;
+                top: 20px;
+                right: 20px;
+            }
+            
+            .logout-btn {
+                top: 80px;
+                right: 20px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -482,8 +550,12 @@
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
         
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
         
         const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
         const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -492,12 +564,8 @@
         
         const alphabet = katakana + latin + nums + symbols;
         const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        const rainDrops = [];
-        
-        for (let x = 0; x < columns; x++) {
-            rainDrops[x] = 1;
-        }
+        let columns = Math.floor(canvas.width / fontSize);
+        let rainDrops = Array(columns).fill(1);
         
         const draw = () => {
             ctx.fillStyle = 'rgba(13, 17, 23, 0.05)';
@@ -517,7 +585,7 @@
             }
         };
         
-        setInterval(draw, 30);
+        const matrixInterval = setInterval(draw, 30);
         
         // ======================
         // TYPEWRITER EFFECT
@@ -575,8 +643,10 @@
             
             // Handle window resize
             window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+                resizeCanvas();
+                // Recalculate columns for matrix effect
+                columns = Math.floor(canvas.width / fontSize);
+                rainDrops = Array(columns).fill(1);
             });
         });
     </script>
