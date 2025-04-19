@@ -402,6 +402,111 @@
             transform: translateY(-2px);
         }
         
+        /* Popup Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            transform: scale(0.7);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 30px rgba(255, 42, 42, 0.3);
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 14px;
+            background: linear-gradient(45deg, var(--primary), var(--accent), var(--primary));
+            z-index: -1;
+            animation: borderPulse 3s infinite alternate;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            text-shadow: var(--glow);
+        }
+        
+        .modal-text {
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .modal-close {
+            background: rgba(255, 42, 42, 0.2);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 0.7rem 1.5rem;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 42, 42, 0.3);
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .modal-close::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 42, 42, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .modal-close:hover::before {
+            left: 100%;
+        }
+        
         /* Animations */
         @keyframes typing {
             from { width: 0 }
@@ -437,6 +542,11 @@
         @keyframes expand {
             from { width: 0; opacity: 0; }
             to { width: 70%; opacity: 0.5; }
+        }
+        
+        @keyframes borderPulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
         }
         
         /* Particle background */
@@ -486,6 +596,10 @@
             .features li {
                 padding-left: 1.5rem;
             }
+            
+            .modal-content {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -501,6 +615,15 @@
     
     <!-- Logout Button -->
     <button id="logoutBtn" class="logout-btn">Logout</button>
+    
+    <!-- Popup Modal -->
+    <div class="modal-overlay" id="bypasserModal">
+        <div class="modal-content">
+            <h2 class="modal-title">COMING SOON</h2>
+            <p class="modal-text">The Bypasser feature is currently under development and will be available in the next update. Stay tuned for this powerful new functionality!</p>
+            <button class="modal-close" id="modalClose">UNDERSTOOD</button>
+        </div>
+    </div>
     
     <!-- Main Content -->
     <div class="container">
@@ -520,7 +643,7 @@
                 <a href="YOUR_REFRESHER_LINK_HERE" class="button">
                     <span style="color: var(--accent)">~</span> Refresher
                 </a>
-                <a href="YOUR_BYPASSER_LINK_HERE" class="button">
+                <a href="#" class="button" id="bypasserBtn">
                     <span style="color: var(--accent)">#</span> Bypasser
                 </a>
                 
@@ -564,6 +687,9 @@
         const userAvatar = document.getElementById('userAvatar');
         const logoutBtn = document.getElementById('logoutBtn');
         const mainLogo = document.getElementById('mainLogo');
+        const bypasserBtn = document.getElementById('bypasserBtn');
+        const bypasserModal = document.getElementById('bypasserModal');
+        const modalClose = document.getElementById('modalClose');
 
         // Session Management
         function saveSession(user) {
@@ -780,6 +906,20 @@
         });
         
         // ======================
+        // MODAL FUNCTIONS
+        // ======================
+        
+        function showBypasserModal() {
+            bypasserModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function hideBypasserModal() {
+            bypasserModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // ======================
         // INITIALIZE EVERYTHING
         // ======================
         
@@ -798,6 +938,22 @@
             
             // Setup logout button
             logoutBtn.addEventListener('click', handleLogout);
+            
+            // Setup bypasser button
+            bypasserBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showBypasserModal();
+            });
+            
+            // Setup modal close button
+            modalClose.addEventListener('click', hideBypasserModal);
+            
+            // Close modal when clicking outside
+            bypasserModal.addEventListener('click', (e) => {
+                if (e.target === bypasserModal) {
+                    hideBypasserModal();
+                }
+            });
             
             // Toggle logout button when clicking avatar or logo
             userAvatar.addEventListener('click', toggleLogoutButton);
