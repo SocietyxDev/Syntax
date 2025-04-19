@@ -6,20 +6,30 @@
     <title>SYNTAX | Autohar v2.0</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
         
         :root {
-            --bg: #0d1117;
-            --primary: #58a6ff;
-            --secondary: #8b949e;
-            --accent: #00ffaa;
+            --bg: #0a0a0a;
+            --bg-secondary: #111111;
+            --primary: #ff2a2a;
+            --primary-dark: #cc0000;
+            --secondary: #8b8b8b;
+            --accent: #ff5555;
+            --text: #f0f0f0;
             --discord: #5865F2;
-            --glow: 0 0 10px rgba(88, 166, 255, 0.7);
+            --glow: 0 0 10px rgba(255, 42, 42, 0.7);
+            --glow-accent: 0 0 15px rgba(255, 85, 85, 0.7);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         
         body {
             background-color: var(--bg);
-            color: white;
+            color: var(--text);
             font-family: 'JetBrains Mono', monospace;
             text-align: center;
             margin: 0;
@@ -28,6 +38,7 @@
             line-height: 1.6;
             user-select: none;
             -webkit-user-select: none;
+            min-height: 100vh;
         }
         
         canvas {
@@ -46,6 +57,10 @@
             z-index: 2;
             max-width: 1200px;
             margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         
         h1 {
@@ -60,10 +75,30 @@
             letter-spacing: -1px;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s ease;
         }
         
         h1:hover {
-            text-shadow: 0 0 15px rgba(88, 166, 255, 0.9);
+            text-shadow: var(--glow-accent);
+        }
+        
+        h1:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
         }
         
         .tagline {
@@ -71,16 +106,33 @@
             font-size: clamp(0.9rem, 3vw, 1.1rem);
             margin-bottom: 2rem;
             opacity: 0.9;
+            animation: fadeIn 2s ease;
         }
         
         .tagline a {
             color: var(--primary);
             text-decoration: none;
             transition: 0.3s;
+            position: relative;
+        }
+        
+        .tagline a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--primary);
+            transition: width 0.3s ease;
         }
         
         .tagline a:hover {
             text-shadow: var(--glow);
+        }
+        
+        .tagline a:hover::after {
+            width: 100%;
         }
         
         .divider {
@@ -89,11 +141,12 @@
             margin: 1.5rem auto;
             width: 70%;
             opacity: 0.5;
+            animation: expand 1.5s ease;
         }
         
         .buttons {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             justify-content: center;
             flex-wrap: wrap;
             margin: 2rem 0;
@@ -103,23 +156,33 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.8rem 1.5rem;
-            border-radius: 4px;
+            padding: 1rem 2rem;
+            border-radius: 6px;
             font-size: clamp(0.9rem, 3vw, 1rem);
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
             border: 1px solid var(--primary);
             color: var(--primary);
-            background: rgba(13, 17, 23, 0.7);
+            background: rgba(10, 10, 10, 0.7);
             cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(0);
+            animation: float 3s ease-in-out infinite;
+            animation-delay: calc(var(--delay) * 0.1s);
         }
+        
+        .button:nth-child(1) { --delay: 1; }
+        .button:nth-child(2) { --delay: 2; }
+        .button:nth-child(3) { --delay: 3; }
+        .button:nth-child(4) { --delay: 4; }
         
         .button.discord {
             background: rgba(88, 101, 242, 0.2);
             border-color: var(--discord);
             color: white;
+            animation-delay: 0.5s;
         }
         
         .button::before {
@@ -129,18 +192,19 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(88, 166, 255, 0.2), transparent);
-            transition: 0.5s;
+            background: linear-gradient(90deg, transparent, rgba(255, 42, 42, 0.3), transparent);
+            transition: 0.6s;
         }
         
         .button:hover {
-            background: rgba(88, 166, 255, 0.1);
-            box-shadow: 0 0 10px var(--primary), 0 0 20px rgba(88, 166, 255, 0.3);
+            background: rgba(255, 42, 42, 0.15);
+            box-shadow: 0 0 15px var(--primary), 0 0 30px rgba(255, 42, 42, 0.3);
+            transform: translateY(-5px) scale(1.05);
         }
         
         .button.discord:hover {
             background: rgba(88, 101, 242, 0.4);
-            box-shadow: 0 0 10px var(--discord), 0 0 20px rgba(88, 101, 242, 0.3);
+            box-shadow: 0 0 15px var(--discord), 0 0 30px rgba(88, 101, 242, 0.3);
         }
         
         .button:hover::before {
@@ -148,15 +212,17 @@
         }
         
         .features {
-            background: rgba(13, 17, 23, 0.7);
+            background: rgba(17, 17, 17, 0.8);
             border: 1px solid var(--primary);
-            border-radius: 8px;
-            padding: 1.5rem;
+            border-radius: 12px;
+            padding: 2rem;
             margin: 2rem auto;
             max-width: 800px;
-            box-shadow: 0 0 20px rgba(88, 166, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(255, 42, 42, 0.15);
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(5px);
+            animation: slideUp 1s ease;
         }
         
         .features::before {
@@ -166,9 +232,20 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(88, 166, 255, 0.05) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 42, 42, 0.1) 0%, transparent 70%);
             animation: rotate 20s linear infinite;
             z-index: -1;
+        }
+        
+        .features::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            animation: borderGlow 3s infinite alternate;
         }
         
         @keyframes rotate {
@@ -176,11 +253,28 @@
             100% { transform: rotate(360deg); }
         }
         
+        @keyframes borderGlow {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
         .features h2 {
             font-size: clamp(1.3rem, 5vw, 1.8rem);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             color: var(--accent);
-            text-shadow: 0 0 8px rgba(0, 255, 170, 0.5);
+            text-shadow: 0 0 8px rgba(255, 85, 85, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .features h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), transparent);
         }
         
         .features ul {
@@ -192,11 +286,22 @@
         }
         
         .features li {
-            padding: 0.5rem 0;
+            padding: 0.8rem 0;
             position: relative;
-            padding-left: 1.5rem;
+            padding-left: 2rem;
             font-size: clamp(0.9rem, 3vw, 1rem);
             color: var(--secondary);
+            transition: all 0.3s ease;
+            border-bottom: 1px dashed rgba(255, 42, 42, 0.2);
+        }
+        
+        .features li:last-child {
+            border-bottom: none;
+        }
+        
+        .features li:hover {
+            color: var(--text);
+            transform: translateX(5px);
         }
         
         .features li::before {
@@ -205,6 +310,12 @@
             left: 0;
             color: var(--primary);
             font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .features li:hover::before {
+            transform: scale(1.5);
+            color: var(--accent);
         }
         
         .footer {
@@ -212,6 +323,7 @@
             font-size: 0.8rem;
             color: var(--secondary);
             opacity: 0.7;
+            animation: fadeIn 2s ease;
         }
         
         .typewriter {
@@ -226,6 +338,7 @@
         .discord-login-container {
             width: 100%;
             margin-top: 1rem;
+            animation: fadeIn 1s ease;
         }
         
         .user-avatar {
@@ -236,16 +349,18 @@
             height: 50px;
             border-radius: 50%;
             border: 2px solid var(--primary);
-            box-shadow: 0 0 15px rgba(88, 166, 255, 0.5);
-            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.5);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 100;
             display: none;
             cursor: pointer;
+            object-fit: cover;
         }
         
         .user-avatar:hover {
-            transform: scale(1.1);
+            transform: scale(1.1) rotate(5deg);
             box-shadow: 0 0 20px var(--primary);
+            border-color: var(--accent);
         }
 
         /* Hide login button when logged in */
@@ -258,26 +373,36 @@
             position: fixed;
             top: 80px;
             right: 20px;
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 1.2rem;
             background: rgba(255, 50, 50, 0.2);
             border: 1px solid rgba(255, 50, 50, 0.5);
             color: #ff6b6b;
-            border-radius: 4px;
+            border-radius: 6px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.9rem;
             cursor: pointer;
             z-index: 100;
             display: none;
             transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(255, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+        
+        .logout-btn.visible {
+            transform: translateY(0);
+            opacity: 1;
         }
         
         .logout-btn:hover {
             background: rgba(255, 50, 50, 0.3);
             box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
             color: #ff5252;
+            transform: translateY(-2px);
         }
         
+        /* Animations */
         @keyframes typing {
             from { width: 0 }
             to { width: 100% }
@@ -288,19 +413,60 @@
             50% { border-color: var(--primary) }
         }
         
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes expand {
+            from { width: 0; opacity: 0; }
+            to { width: 70%; opacity: 0.5; }
+        }
+        
+        /* Particle background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Responsive adjustments */
         @media (max-width: 768px) {
             .buttons {
                 flex-direction: column;
                 align-items: center;
+                gap: 1rem;
             }
             
             .button {
                 width: 100%;
                 justify-content: center;
+                padding: 0.9rem 1.5rem;
             }
             
             .features {
-                padding: 1rem;
+                padding: 1.5rem;
+                margin: 1.5rem 0;
             }
             
             .user-avatar {
@@ -314,6 +480,11 @@
                 top: 65px;
                 right: 15px;
                 font-size: 0.8rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            .features li {
+                padding-left: 1.5rem;
             }
         }
     </style>
@@ -321,6 +492,9 @@
 <body>
     <!-- Matrix Background -->
     <canvas id="matrix"></canvas>
+    
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
     
     <!-- User Avatar -->
     <img id="userAvatar" class="user-avatar" src="" alt="Discord Avatar">
@@ -330,40 +504,44 @@
     
     <!-- Main Content -->
     <div class="container">
-        <h1 id="mainLogo" class="typewriter">SYNTAX AUTOHAR</h1>
-        <p class="tagline">Developed by <strong>Syntax</strong> on Discord | Owner of <a href="https://discord.gg/499zddGkba">discord.gg/499zddGkba</a></p>
-        
-        <div class="divider"></div>
-        
-        <div class="buttons">
-            <a href="YOUR_AUTOHAR_LINK_HERE" class="button">
-                <span style="color: var(--accent)">$</span> AutoHar Gen
-            </a>
-            <a href="YOUR_LOGIN_LINK_HERE" class="button">
-                <span style="color: var(--accent)">></span> Main Site Login
-            </a>
-            <a href="YOUR_REFRESHER_LINK_HERE" class="button">
-                <span style="color: var(--accent)">~</span> Refresher
-            </a>
-            <a href="YOUR_BYPASSER_LINK_HERE" class="button">
-                <span style="color: var(--accent)">#</span> Bypasser
-            </a>
+        <div>
+            <h1 id="mainLogo" class="typewriter">SYNTAX AUTOHAR</h1>
+            <p class="tagline">Developed by <strong>Syntax</strong> on Discord | Owner of <a href="https://discord.gg/499zddGkba">discord.gg/499zddGkba</a></p>
             
-            <div class="discord-login-container">
-                <button id="discordLogin" class="button discord">
-                    <span style="color: white">⎔</span> Login with Discord
-                </button>
+            <div class="divider"></div>
+            
+            <div class="buttons">
+                <a href="YOUR_AUTOHAR_LINK_HERE" class="button">
+                    <span style="color: var(--accent)">$</span> AutoHar Gen
+                </a>
+                <a href="YOUR_LOGIN_LINK_HERE" class="button">
+                    <span style="color: var(--accent)">></span> Main Site Login
+                </a>
+                <a href="YOUR_REFRESHER_LINK_HERE" class="button">
+                    <span style="color: var(--accent)">~</span> Refresher
+                </a>
+                <a href="YOUR_BYPASSER_LINK_HERE" class="button">
+                    <span style="color: var(--accent)">#</span> Bypasser
+                </a>
+                
+                <div class="discord-login-container">
+                    <button id="discordLogin" class="button discord">
+                        <span style="color: white">⎔</span> Login with Discord
+                    </button>
+                </div>
             </div>
-        </div>
-        
-        <div class="features">
-            <h2>// FEATURES</h2>
-            <ul>
-                <li>Easy to Use Interface</li>
-                <li>Fast & Reliable Performance</li>
-                <li>Active Community Support</li>
-                <li>Regular Updates & Improvements</li>
-            </ul>
+            
+            <div class="features">
+                <h2>// FEATURES</h2>
+                <ul>
+                    <li>Easy to Use Interface</li>
+                    <li>Fast & Reliable Performance</li>
+                    <li>Active Community Support</li>
+                    <li>Regular Updates & Improvements</li>
+                    <li>Advanced Security Features</li>
+                    <li>Customizable Settings</li>
+                </ul>
+            </div>
         </div>
         
         <div class="footer">
@@ -422,11 +600,7 @@
 
         // Toggle logout button visibility
         function toggleLogoutButton() {
-            if (logoutBtn.style.display === 'none' || logoutBtn.style.display === '') {
-                logoutBtn.style.display = 'block';
-            } else {
-                logoutBtn.style.display = 'none';
-            }
+            logoutBtn.classList.toggle('visible');
         }
 
         // Discord Auth Functions
@@ -440,7 +614,7 @@
         function handleLogout() {
             clearSession();
             updateAuthState(false, null);
-            toggleLogoutButton(); // Ensure logout button is hidden
+            logoutBtn.classList.remove('visible');
         }
 
         async function handleAuthCallback() {
@@ -497,19 +671,22 @@
         const rainDrops = [];
         
         for (let x = 0; x < columns; x++) {
-            rainDrops[x] = 1;
+            rainDrops[x] = Math.random() * canvas.height / fontSize;
         }
         
-        const draw = () => {
-            ctx.fillStyle = 'rgba(13, 17, 23, 0.05)';
+        const drawMatrix = () => {
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            ctx.fillStyle = '#58a6ff';
-            ctx.font = fontSize + 'px JetBrains Mono';
+            ctx.fillStyle = '#ff2a2a';
+            ctx.font = `bold ${fontSize}px JetBrains Mono`;
             
             for (let i = 0; i < rainDrops.length; i++) {
                 const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                const opacity = Math.min(1, rainDrops[i] / (canvas.height / fontSize));
+                ctx.globalAlpha = opacity;
                 ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+                ctx.globalAlpha = 1;
                 
                 if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     rainDrops[i] = 0;
@@ -518,7 +695,68 @@
             }
         };
         
-        setInterval(draw, 30);
+        // ======================
+        // PARTICLE BACKGROUND
+        // ======================
+        
+        const particlesContainer = document.getElementById('particles');
+        const particles = [];
+        const particleCount = window.innerWidth < 768 ? 30 : 50;
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.color = `rgba(255, ${Math.floor(Math.random() * 85 + 42)}, ${Math.floor(Math.random() * 85 + 42)}, ${Math.random() * 0.5 + 0.1})`;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if (this.x < 0 || this.x > window.innerWidth) this.speedX *= -1;
+                if (this.y < 0 || this.y > window.innerHeight) this.speedY *= -1;
+            }
+            
+            draw() {
+                const particleEl = document.createElement('div');
+                particleEl.style.position = 'absolute';
+                particleEl.style.width = `${this.size}px`;
+                particleEl.style.height = `${this.size}px`;
+                particleEl.style.backgroundColor = this.color;
+                particleEl.style.borderRadius = '50%';
+                particleEl.style.left = `${this.x}px`;
+                particleEl.style.top = `${this.y}px`;
+                particleEl.style.boxShadow = `0 0 ${this.size * 2}px ${this.color}`;
+                particleEl.style.transition = 'all 0.1s ease';
+                particlesContainer.appendChild(particleEl);
+                
+                // Remove after adding to prevent memory leak
+                setTimeout(() => {
+                    if (particleEl.parentNode === particlesContainer) {
+                        particlesContainer.removeChild(particleEl);
+                    }
+                }, 100);
+            }
+        }
+        
+        function initParticles() {
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+        
+        function animateParticles() {
+            particlesContainer.innerHTML = '';
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
         
         // ======================
         // TYPEWRITER EFFECT
@@ -570,7 +808,7 @@
             // Hide logout button when clicking anywhere else
             document.addEventListener('click', (e) => {
                 if (session && e.target !== userAvatar && e.target !== mainLogo && e.target !== logoutBtn) {
-                    logoutBtn.style.display = 'none';
+                    logoutBtn.classList.remove('visible');
                 }
             });
             
@@ -579,6 +817,11 @@
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
             });
+            
+            // Start animations
+            setInterval(drawMatrix, 30);
+            initParticles();
+            animateParticles();
         });
     </script>
 </body>
