@@ -716,7 +716,7 @@
                 discordLoginBtn.classList.add('hidden');
                 userAvatar.style.display = 'block';
                 userAvatar.src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png?size=128`;
-                logoutBtn.style.display = 'none'; // Hide logout button initially
+                logoutBtn.style.display = 'block'; // Make sure logout button is available
             } else {
                 discordLoginBtn.classList.remove('hidden');
                 userAvatar.style.display = 'none';
@@ -726,7 +726,9 @@
 
         // Toggle logout button visibility
         function toggleLogoutButton() {
-            logoutBtn.classList.toggle('visible');
+            if (getSession()) {
+                logoutBtn.classList.toggle('visible');
+            }
         }
 
         // Discord Auth Functions
@@ -770,9 +772,20 @@
             const response = await fetch('https://discord.com/api/users/@me', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
+            
+            if (!response.ok) {
+                throw new Error("Failed to fetch user data");
+            }
+            
             const user = await response.json();
             
-            if (!user.avatar) throw new Error("Invalid user data");
+            if (!user.avatar) {
+                // Handle users without avatars (use default discord avatar)
+                user.avatar = user.discriminator === '0' 
+                    ? `https://cdn.discordapp.com/embed/avatars/${(parseInt(user.id) >> 22) % 6}.png`
+                    : `https://cdn.discordapp.com/embed/avatars/${user.discriminator % 5}.png`;
+            }
+            
             return user;
         }
 
@@ -957,13 +970,15 @@
             
             // Toggle logout button when clicking avatar or logo
             userAvatar.addEventListener('click', toggleLogoutButton);
-            mainLogo.addEventListener('click', () => {
-                if (session) toggleLogoutButton();
-            });
+            mainLogo.addEventListener('click', toggleLogoutButton);
             
             // Hide logout button when clicking anywhere else
             document.addEventListener('click', (e) => {
-                if (session && e.target !== userAvatar && e.target !== mainLogo && e.target !== logoutBtn) {
+                const isAvatar = e.target === userAvatar;
+                const isLogo = e.target === mainLogo;
+                const isLogoutBtn = e.target === logoutBtn;
+                
+                if (session && !isAvatar && !isLogo && !isLogoutBtn) {
                     logoutBtn.classList.remove('visible');
                 }
             });
